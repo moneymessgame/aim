@@ -1,0 +1,48 @@
+{
+  "name": "airine457",
+  "bio": [
+    "test2"
+  ],
+  "traits": [
+    "Любознательный",
+    "Креативный"
+  ],
+  "examples": [
+    "Это пример твита."
+  ],
+  "example_accounts": [
+    "0xzerebro"
+  ],
+  "loop_delay": 900,
+  "config": [
+    {
+      "name": "sonic",
+      "network": "testnet"
+    },
+    {
+      "name": "discord",
+      "message_read_count": 10,
+      "message_emoji_name": "❤️",
+      "server_id": ""
+    }
+  ],
+  "tasks": [
+    {
+      "name": "post-tweet",
+      "weight": 1
+    },
+    {
+      "name": "reply-to-tweet",
+      "weight": 1
+    },
+    {
+      "name": "like-tweet",
+      "weight": 1
+    }
+  ],
+  "use_time_based_weights": false,
+  "time_based_multipliers": {
+    "tweet_night_multiplier": 0.4,
+    "engagement_day_multiplier": 1.5
+  }
+}
