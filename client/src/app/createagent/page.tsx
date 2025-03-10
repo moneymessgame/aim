@@ -30,7 +30,7 @@ interface AgentData {
   };
 }
 
-// Шаблоны агентов
+// Agent templates
 interface AgentTemplate {
   id: string;
   name: string;
@@ -265,7 +265,7 @@ export default function AgentCreator() {
   const [agentData, setAgentData] = useState<AgentData>(emptyAgentData)
   
   const [currentModuleType, setCurrentModuleType] = useState('twitter')
-  // Функция применения шаблона агента
+  // Function to apply agent template
   const applyTemplate = (templateId: string) => {
     if (!templateId) {
       setAgentData(emptyAgentData)
@@ -278,7 +278,7 @@ export default function AgentCreator() {
     }
   }
   
-  // Обработчик изменения шаблона
+  // Template change handler
   const handleTemplateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const templateId = e.target.value
     setSelectedTemplate(templateId)
@@ -318,12 +318,12 @@ export default function AgentCreator() {
 
   const validateForm = (): boolean => {
     if (!agentData.name) {
-      setError('Имя агента обязательно к заполнению')
+      setError('Agent name is required')
       return false
     }
     
     if (agentData.bio.some(item => !item)) {
-      setError('Все поля описания должны быть заполнены')
+      setError('All description fields must be filled')
       return false
     }
     
@@ -345,15 +345,15 @@ export default function AgentCreator() {
       
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Ошибка сохранения агента')
+        throw new Error(errorData.error || 'Error saving agent')
       }
       
-      setSuccess(`Агент "${agentData.name}" успешно создан`)
+      setSuccess(`Agent "${agentData.name}" successfully created`)
       setTimeout(() => {
-        router.push('/api-test') // Перенаправление на страницу тестирования API
+        router.push('/api-test') // Redirect to API testing page
       }, 2000)
     } catch (err: any) {
-      setError(err.message || 'Произошла ошибка при сохранении агента')
+      setError(err.message || 'An error occurred while saving the agent')
     } finally {
       setLoading(false)
     }
@@ -453,7 +453,7 @@ export default function AgentCreator() {
 
   return (
     <div className="max-w-5xl mx-auto p-6 bg-gray-100 min-h-screen rounded-lg">
-      <h1 className="text-4xl font-bold mb-8 font-[var(--font-bebas-neue)] tracking-wider">СОЗДАНИЕ НОВОГО АГЕНТА</h1>
+      <h1 className="text-4xl font-bold mb-8 font-[var(--font-bebas-neue)] tracking-wider">CREATE NEW AGENT</h1>
       
       {error && (
         <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-6 py-4 rounded-xl shadow-md mb-6">
@@ -467,7 +467,7 @@ export default function AgentCreator() {
         </div>
       )}
 
-      {/* Выбор шаблона агента */}
+      {/* Agent template selection */}
       <div className="mb-8 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
         <h2 className="text-2xl font-medium mb-4 font-[var(--font-bebas-neue)] tracking-wider">CHOOSE AN AGENT TEMPLATE</h2>
         <p className="mb-4 text-[var(--text-dark)]">Start with a pre-configured template or create an agent from scratch.</p>
@@ -503,7 +503,7 @@ export default function AgentCreator() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
         <div className="space-y-6">
           <div>
-            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Имя агента *</label>
+            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Agent Name *</label>
             <input
               type="text"
               className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-[var(--text-dark)]"
@@ -514,14 +514,14 @@ export default function AgentCreator() {
           </div>
           
           <div>
-            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Описание агента *</label>
+            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Agent Description *</label>
             {agentData.bio.map((line, index) => (
               <div key={`bio-${index}`} className="flex mb-2">
                 <textarea
                   className="flex-1 p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-[var(--text-dark)]"
                   value={line}
                   onChange={(e) => updateArrayItem('bio', index, e.target.value)}
-                  placeholder="Описание агента"
+                  placeholder="Agent description"
                   rows={2}
                 />
                 {agentData.bio.length > 1 && (
@@ -540,12 +540,12 @@ export default function AgentCreator() {
               className="text-blue-600 hover:text-blue-800 font-medium"
               onClick={() => addArrayItem('bio')}
             >
-              + Добавить описание
+              + Add description
             </button>
           </div>
           
           <div>
-            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Характеристики</label>
+            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Traits</label>
             {agentData.traits.map((trait, index) => (
               <div key={`trait-${index}`} className="flex mb-2">
                 <input
@@ -553,7 +553,7 @@ export default function AgentCreator() {
                   className="flex-1 p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-[var(--text-dark)]"
                   value={trait}
                   onChange={(e) => updateArrayItem('traits', index, e.target.value)}
-                  placeholder="Характеристика"
+                  placeholder="Trait"
                 />
                 <button
                   type="button"
@@ -569,12 +569,12 @@ export default function AgentCreator() {
               className="text-blue-600 hover:text-blue-800 font-medium"
               onClick={() => addArrayItem('traits')}
             >
-              + Добавить характеристику
+              + Add trait
             </button>
           </div>
           
           <div>
-            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Примеры твитов</label>
+            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Tweet Examples</label>
             {agentData.examples.map((example, index) => (
               <div key={`example-${index}`} className="flex mb-2">
                 <input
@@ -582,7 +582,7 @@ export default function AgentCreator() {
                   className="flex-1 p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-[var(--text-dark)]"
                   value={example}
                   onChange={(e) => updateArrayItem('examples', index, e.target.value)}
-                  placeholder="Пример твита"
+                  placeholder="Tweet example"
                 />
                 <button
                   type="button"
@@ -598,12 +598,12 @@ export default function AgentCreator() {
               className="text-blue-600 hover:text-blue-800 font-medium"
               onClick={() => addArrayItem('examples')}
             >
-              + Добавить пример
+              + Add example
             </button>
           </div>
           
           <div>
-            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Примеры аккаунтов</label>
+            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Example Accounts</label>
             {agentData.example_accounts.map((account, index) => (
               <div key={`account-${index}`} className="flex mb-2">
                 <input
@@ -611,7 +611,7 @@ export default function AgentCreator() {
                   className="flex-1 p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-[var(--text-dark)]"
                   value={account}
                   onChange={(e) => updateArrayItem('example_accounts', index, e.target.value)}
-                  placeholder="Аккаунт"
+                  placeholder="Account"
                 />
                 <button
                   type="button"
@@ -627,12 +627,12 @@ export default function AgentCreator() {
               className="text-blue-600 hover:text-blue-800 font-medium"
               onClick={() => addArrayItem('example_accounts')}
             >
-              + Добавить аккаунт
+              + Add account
             </button>
           </div>
           
           <div>
-            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Задержка цикла (в секундах)</label>
+            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Loop Delay (in seconds)</label>
             <input
               type="number"
               className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-[var(--text-dark)]"
@@ -645,7 +645,7 @@ export default function AgentCreator() {
         
         <div className="space-y-6">
           <div>
-            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Задачи</label>
+            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Tasks</label>
             {agentData.tasks.map((task, index) => (
               <div key={`task-${index}`} className="flex items-center mb-2">
                 <input
@@ -653,7 +653,7 @@ export default function AgentCreator() {
                   className="flex-1 p-2 border rounded mr-2"
                   value={task.name}
                   onChange={(e) => updateTask(index, 'name', e.target.value)}
-                  placeholder="Название задачи"
+                  placeholder="Task name"
                 />
                 <input
                   type="number"
@@ -677,12 +677,12 @@ export default function AgentCreator() {
               className="text-blue-600 hover:text-blue-800 font-medium"
               onClick={addTask}
             >
-              + Добавить задачу
+              + Add task
             </button>
           </div>
           
           <div>
-            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Конфигурация модулей</label>
+            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Module Configuration</label>
             <div className="mb-4">
               <select
                 className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2 text-[var(--text-dark)]"
@@ -700,7 +700,7 @@ export default function AgentCreator() {
                 className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full shadow-md transition-all duration-200"
                 onClick={addModuleConfig}
               >
-                Добавить модуль
+                Add module
               </button>
             </div>
             
@@ -713,7 +713,7 @@ export default function AgentCreator() {
                     className="text-red-600 hover:text-red-800 transition-all duration-200 font-medium"
                     onClick={() => removeModuleConfig(index)}
                   >
-                    Удалить
+                    Remove
                   </button>
                 </div>
                 
@@ -747,15 +747,15 @@ export default function AgentCreator() {
               className="mr-2 w-5 h-5 text-blue-500 focus:ring-blue-400 rounded"
             />
             <label htmlFor="use_time_based_weights" className="text-[var(--text-dark)]">
-              Использовать веса на основе времени
+              Use time-based weights
             </label>
           </div>
           
           {agentData.use_time_based_weights && (
             <div className="border border-gray-200 rounded-xl p-5 bg-white shadow-md">
-              <h3 className="font-medium mb-4">Множители на основе времени</h3>
+              <h3 className="font-medium mb-4">Time-based Multipliers</h3>
               <div className="mb-2">
-                <label className="block text-sm text-gray-700 mb-1">Ночной множитель твитов</label>
+                <label className="block text-sm text-gray-700 mb-1">Tweet Night Multiplier</label>
                 <input
                   type="number"
                   className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-[var(--text-dark)]"
@@ -772,7 +772,7 @@ export default function AgentCreator() {
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-700 mb-1">Дневной множитель взаимодействия</label>
+                <label className="block text-sm text-gray-700 mb-1">Engagement Day Multiplier</label>
                 <input
                   type="number"
                   className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-[var(--text-dark)]"
@@ -800,16 +800,16 @@ export default function AgentCreator() {
           onClick={handleSave}
           disabled={loading}
         >
-          {loading ? 'Сохранение...' : 'Сохранить агента'}
+          {loading ? 'Saving...' : 'Save Agent'}
         </button>
         <Link href="/api-test" className="bg-gray-200 text-gray-800 px-8 py-4 rounded-full shadow-md hover:bg-gray-300 transition-all duration-200 font-medium">
-          Отмена
+          Cancel
         </Link>
       </div>
 
       {agentData.config.length > 0 && (
         <div className="mt-10">
-          <h3 className="text-2xl font-medium mb-4 font-[var(--font-bebas-neue)] tracking-wider">ПРЕДПРОСМОТР JSON КОНФИГУРАЦИИ</h3>
+          <h3 className="text-2xl font-medium mb-4 font-[var(--font-bebas-neue)] tracking-wider">JSON CONFIGURATION PREVIEW</h3>
           <pre className="bg-white p-5 rounded-xl border border-gray-200 shadow-lg overflow-x-auto text-[var(--text-dark)]">
             {JSON.stringify(agentData, null, 2)}
           </pre>

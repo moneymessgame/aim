@@ -14,7 +14,7 @@ export function MetaMaskConnect() {
     try {
       connect({ connector: connectors[0] })
     } catch (error) {
-      console.error('Ошибка подключения:', error)
+      console.error('Error connecting to MetaMask:', error)
     } finally {
       setIsConnecting(false)
     }
@@ -28,7 +28,7 @@ export function MetaMaskConnect() {
           disabled={isPending}
           className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold disabled:opacity-50"
         >
-          {isPending ? 'Подключение...' : 'Подключить MetaMask'}
+          {isPending ? 'Connecting...' : 'Connect MetaMask'}
         </button>
       ) : (
         <div className="flex flex-col items-center gap-2">
@@ -39,14 +39,14 @@ export function MetaMaskConnect() {
             onClick={() => disconnect()}
             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm"
           >
-            Отключить кошелек
+            Disconnect
           </button>
         </div>
       )}
       
       {error && (
         <div className="text-red-500 text-sm mt-2">
-          {error.message || 'Произошла ошибка при подключении к MetaMask'}
+          {error.message || 'Error connecting to MetaMask'}
         </div>
       )}
     </div>

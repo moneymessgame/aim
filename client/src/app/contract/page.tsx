@@ -12,7 +12,7 @@ export default function ContractPage() {
 		'info'
 	);
 
-	// Используем useCallback, чтобы предотвратить ненужные перерисовки
+	// Using useCallback to prevent unnecessary re-renders
 	const handleTabChange = useCallback(
 		(tab: 'info' | 'interact' | 'history') => {
 			setActiveTab(tab);
@@ -24,24 +24,25 @@ export default function ContractPage() {
 		<div className="container mx-auto px-4 py-8 max-w-5xl">
 			<div className="mb-8">
 				<h1 className="text-3xl font-bebas-neue">
-					Управление контрактом Sonic Token
+					Sonic Token Contract Management
 				</h1>
 			</div>
 
 			{!isConnected ? (
 				<div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 shadow-sm">
 					<h2 className="text-xl font-semibold mb-2 font-montserrat">
-						Требуется подключение к кошельку
+						Wallet Connection Required
 					</h2>
 					<p className="text-gray-700 mb-4">
-						Для взаимодействия с контрактом Sonic Token необходимо подключить
-						кошелек MetaMask в верхней части страницы.
+						To interact with the Sonic Token contract, you need to connect
+						MetaMask wallet at the top of the page.
 					</p>
 				</div>
 			) : (
 				<>
 					<div className="flex border-b border-gray-200 mb-6 font-montserrat">
 						<button
+							type="button"
 							className={`px-4 py-2 border-b-2 ${
 								activeTab === 'info'
 									? 'border-blue-600 text-blue-600'
@@ -49,9 +50,10 @@ export default function ContractPage() {
 							}`}
 							onClick={() => handleTabChange('info')}
 						>
-							Информация о контракте
+							Contract Information
 						</button>
 						<button
+							type="button"
 							className={`px-4 py-2 border-b-2 ${
 								activeTab === 'interact'
 									? 'border-blue-600 text-blue-600'
@@ -59,9 +61,10 @@ export default function ContractPage() {
 							}`}
 							onClick={() => handleTabChange('interact')}
 						>
-							Взаимодействие
+							Interaction
 						</button>
 						<button
+							type="button"
 							className={`px-4 py-2 border-b-2 ${
 								activeTab === 'history'
 									? 'border-blue-600 text-blue-600'
@@ -69,7 +72,7 @@ export default function ContractPage() {
 							}`}
 							onClick={() => handleTabChange('history')}
 						>
-							История транзакций
+							Transaction History
 						</button>
 					</div>
 

@@ -1,43 +1,55 @@
-import type { Metadata } from "next";
-import { Bebas_Neue, Montserrat } from "next/font/google";
-import "./globals.css";
-import { WagmiContextProvider } from "../lib/wagmi-provider";
-import AppLayout from "../components/layout/AppLayout";
+import type { Metadata } from 'next';
+import { Montserrat } from 'next/font/google';
+import './globals.css';
+import { WagmiContextProvider } from '../lib/wagmi-provider';
+import AppLayout from '../components/layout/AppLayout';
 
-const bebasNeue = Bebas_Neue({
-  weight: '400',
-  variable: "--font-bebas-neue",
-  subsets: ["latin"],
-  display: 'swap',
-});
+import { cn } from '../lib/utils';
+import { ThemeProvider } from '../components/theme-provider';
+import { siteConfig } from '@/config/site';
+import { Toaster } from '@/components/ui/sonner';
+import { TranslationsProvider } from '@/components/translations-context';
+import { Banner } from '@/components/banner';
+import { ptSansNarrow } from '../lib/fonts';
 
 const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  subsets: ["latin", "cyrillic", "cyrillic-ext"],
-  display: 'swap',
+	variable: '--font-montserrat',
+	subsets: ['cyrillic-ext'],
+	display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: "ZerePy Agent Creator",
-  description: "Создание и настройка агентов для ZerePy",
+	title: 'AIM',
+	description: 'Создание и настройка агентов для ZerePy',
 };
 
 export default function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  return (
-    <html lang="ru">
-      <body
-        className={`${bebasNeue.variable} ${montserrat.variable} antialiased`}
-      >
-        <WagmiContextProvider>
-          <AppLayout>
-            {children}
-          </AppLayout>
-        </WagmiContextProvider>
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en" suppressHydrationWarning>
+			<body
+				className={cn(
+					'min-h-dvh bg-background font-sans antialiased',
+					montserrat.variable,
+					ptSansNarrow.variable
+				)}
+			>
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="dark"
+					enableSystem
+					disableTransitionOnChange
+				>
+					<TranslationsProvider>
+						<WagmiContextProvider>
+							<AppLayout>{children}</AppLayout>
+						</WagmiContextProvider>
+					</TranslationsProvider>
+				</ThemeProvider>
+			</body>
+		</html>
+	);
 }

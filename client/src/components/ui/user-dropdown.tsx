@@ -107,7 +107,7 @@ export function UserDropdown() {
     try {
       connectWallet({ connector: connectors[0] })
     } catch (error) {
-      console.error('Ошибка подключения:', error)
+      console.error('Error connecting to MetaMask:', error)
     } finally {
       setIsConnecting(false)
     }
@@ -162,17 +162,17 @@ export function UserDropdown() {
             onClick={handleUserDropdownToggle}
             className="text-sm bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-r-md font-medium transition user-dropdown"
           >
-            {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Загрузка...'}
+            {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Loading...'}
             <span className="ml-1">{isOpen ? '▲' : '▼'}</span>
           </button>
           
-          {/* Информация о сети */}
+          {/* Information about the network */}
           {networkInfoOpen && (
             <div className="absolute right-0 mt-1 top-full bg-white rounded-md shadow-lg p-4 z-10 w-80 network-info">
-              <h3 className="text-sm font-semibold mb-2">Информация о сети</h3>
+              <h3 className="text-sm font-semibold mb-2">Network Information</h3>
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Имя сети:</span>
+                  <span className="text-gray-500">Network Name:</span>
                   <span className="font-medium">{sonicBlazeChain.name}</span>
                 </div>
                 <div className="flex justify-between">
@@ -180,15 +180,15 @@ export function UserDropdown() {
                   <span className="font-medium">{sonicBlazeChain.rpcUrls.default.http[0]}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">ID цепи:</span>
+                  <span className="text-gray-500">Chain ID:</span>
                   <span className="font-medium">{sonicBlazeChain.id}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Символ валюты:</span>
+                  <span className="text-gray-500">Currency Symbol:</span>
                   <span className="font-medium">{sonicBlazeChain.nativeCurrency.symbol}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Обозреватель блоков:</span>
+                  <span className="text-gray-500">Block Explorer:</span>
                   <a 
                     href={sonicBlazeChain.blockExplorers?.default.url} 
                     target="_blank"
@@ -209,7 +209,7 @@ export function UserDropdown() {
                 onClick={copyAddressToClipboard}
                 className="flex justify-between cursor-pointer hover:bg-slate-50 p-2 rounded transition"
               >
-                <span className="text-sm font-medium">Ваш адрес:</span>
+                <span className="text-sm font-medium">Your Address:</span>
                 <div className="flex items-center">
                   <span className="text-sm text-blue-600 mr-1">{address ? `${address.slice(0, 6)}...${address.slice(-4)}` : ''}</span>
                   {copySuccess ? (
@@ -231,15 +231,15 @@ export function UserDropdown() {
               
               <div className="my-2 pt-2 border-t border-gray-100">
                 <div className="flex justify-between mb-1">
-                  <span className="text-sm text-gray-500">Баланс:</span>
+                  <span className="text-sm text-gray-500">Balance:</span>
                   <span className="text-sm font-medium">
-                    {balance ? `${Number(balance.formatted).toFixed(4)} ${balance.symbol}` : 'Загрузка...'}
+                    {balance ? `${Number(balance.formatted).toFixed(4)} ${balance.symbol}` : 'Loading...'}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-500">Токены:</span>
+                  <span className="text-sm text-gray-500">Tokens:</span>
                   <span className="text-sm font-medium">
-                    {tokenBalance ? `${formattedTokenBalance} ${tokenSymbol || 'SONIC'}` : 'Загрузка...'}
+                    {tokenBalance ? `${formattedTokenBalance} ${tokenSymbol || 'SONIC'}` : 'Loading...'}
                   </span>
                 </div>
               </div>
@@ -248,7 +248,7 @@ export function UserDropdown() {
                 onClick={() => disconnect()}
                 className="mt-3 w-full text-center bg-red-500 hover:bg-red-600 text-white py-1.5 px-4 rounded text-sm transition"
               >
-                Выйти
+                Logout
               </button>
             </div>
           )}
@@ -259,7 +259,7 @@ export function UserDropdown() {
           disabled={isConnecting}
           className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-md transition disabled:opacity-50"
         >
-          {isConnecting ? 'Подключение...' : 'Подключить кошелёк'}
+          {isConnecting ? 'Connecting...' : 'Connect wallet'}
         </button>
       )}
     </div>
