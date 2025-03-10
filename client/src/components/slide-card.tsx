@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import { useTranslations } from '@/components/translations-context'
-import { getSlides, Slide } from '@/lib/airine-data'
+import { getSlides, type Slide } from '@/lib/airine-data'
 
 // Интерфейс Slide импортирован из /lib/airine-data
 
@@ -23,8 +23,7 @@ export function SlideCard({ slides: propSlides, currentSlide: propCurrentSlide, 
   const [direction, setDirection] = useState(0)
   
   // Получаем слайды из нашего центрального хранилища данных, если они не переданы через пропсы
-  const { locale } = t
-  const defaultSlides = getSlides(locale)
+  const defaultSlides = getSlides('ru') // Используем фиксированную локаль 'ru'
   const slides = propSlides || defaultSlides
   
   // Обновляем внутреннее состояние, когда меняются пропсы
@@ -75,7 +74,7 @@ export function SlideCard({ slides: propSlides, currentSlide: propCurrentSlide, 
 
   return (
     <motion.div
-      className="w-full bg-card border rounded-3xl overflow-hidden shadow-lg"
+      className="w-full bg-white border rounded-3xl overflow-hidden shadow-lg"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.3 }}
@@ -90,7 +89,7 @@ export function SlideCard({ slides: propSlides, currentSlide: propCurrentSlide, 
             animate="center"
             exit="exit"
             transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="absolute inset-0 p-6 flex flex-col justify-between"
+            className="absolute inset-0 p-6 flex flex-col justify-between bg-white"
           >
             {slides[currentSlide].imageUrl && (
               <div className="absolute inset-0 z-0">
@@ -147,9 +146,10 @@ export function SlideCard({ slides: propSlides, currentSlide: propCurrentSlide, 
         
         {/* Индикаторы слайдов */}
         <div className="absolute bottom-6 left-6 flex gap-2 z-20">
-          {slides.map((_, index) => (
+          {slides.map((slide, index) => (
             <button
-              key={index}
+              key={`slide-indicator-${slide.id || index}`}
+              type="button"
               onClick={() => goToSlide(index)}
               className={`w-3 h-3 rounded-full transition-all ${
                 index === currentSlide

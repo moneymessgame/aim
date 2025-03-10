@@ -12,7 +12,7 @@ export function BroadcastButton({ isSessionActive, onClick }: BroadcastButtonPro
   return (
     <Button
       variant="custom"
-      className={`w-full py-7 px-8 text-xl font-bold flex items-center justify-center gap-3 motion-preset-shake rounded-full transition-all duration-300 ${!isSessionActive ? 'bg-foreground text-white hover:bg-foreground/90' : 'bg-destructive text-white hover:bg-destructive/90'}`}
+      className={`w-full py-7 px-8 text-xl font-bold flex items-center justify-center gap-3 motion-preset-shake rounded-full transition-all duration-300 ${!isSessionActive ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-red-600 text-white hover:bg-red-700'}`}
       onClick={onClick}
       style={{ fontFamily: 'var(--font-pt-sans-narrow)' }}
     >

@@ -25,11 +25,11 @@ export default function ContractInfo() {
 		userBalance: string;
 	} | null>(null);
 
-	// Мемоизируем функцию запроса данных, чтобы она не пересоздавалась при каждом рендере
+	// Memoize the data request function to prevent recreation on each render
 	const fetchContractInfo = useCallback(async () => {
 		if (!address) return;
 
-		// Проверка, если данные уже загружены, не обновляем состояние загрузки
+		// Check if data is already loaded, don't update loading state
 		if (!loading && contractInfo !== null && !error) return;
 
 		setLoading(true);
@@ -48,7 +48,7 @@ export default function ContractInfo() {
 					contract.balanceOf(address),
 				]);
 
-			// Проверяем, что компонент все еще смонтирован (не размонтирован)
+			// Check that the component is still mounted (not unmounted)
 			setContractInfo({
 				name,
 				symbol,
@@ -59,26 +59,26 @@ export default function ContractInfo() {
 				userBalance: formatTokenAmount(userBalance, decimals),
 			});
 		} catch (err) {
-			console.error('Ошибка при получении информации о контракте:', err);
+			console.error('Error getting contract information:', err);
 			setError(
-				'Не удалось загрузить информацию о контракте. Попробуйте перезагрузить страницу.'
+				'Failed to load contract information. Please try refreshing the page.'
 			);
 		} finally {
 			setLoading(false);
 		}
 	}, [address, contractInfo, error, getSonicTokenContract, loading]);
 
-	// Используем useEffect с минимальными зависимостями
+	// Use useEffect with minimal dependencies
 	useEffect(() => {
-		// Запрашиваем данные только при монтировании компонента или при изменении адреса
+		// Request data only when component mounts or address changes
 		if (address) {
 			fetchContractInfo();
 		}
 
-		// Добавляем интервал для периодического обновления баланса (30 секунд)
+		// Add interval for periodic balance updates (30 seconds)
 		const intervalId = setInterval(() => {
 			if (address) {
-				// Обновляем только баланс, а не всю информацию о контракте
+				// Update only the balance, not all contract information
 				updateUserBalance();
 			}
 		}, 30000);
@@ -86,7 +86,7 @@ export default function ContractInfo() {
 		return () => clearInterval(intervalId);
 	}, [address, fetchContractInfo]);
 
-	// Функция обновления только баланса пользователя
+	// Function to update only the user's balance
 	const updateUserBalance = useCallback(async () => {
 		if (!address || !contractInfo) return;
 
@@ -94,7 +94,7 @@ export default function ContractInfo() {
 			const { contract } = await getSonicTokenContract();
 			const userBalance = await contract.balanceOf(address);
 
-			// Обновляем только баланс, не трогая другие свойства
+			// Update only the balance, not touching other properties
 			setContractInfo((prev) => {
 				if (!prev) return prev;
 				return {
@@ -103,14 +103,14 @@ export default function ContractInfo() {
 				};
 			});
 		} catch (err) {
-			console.error('Ошибка при обновлении баланса:', err);
+			console.error('Error updating balance:', err);
 		}
 	}, [address, contractInfo, getSonicTokenContract]);
 
 	if (loading) {
 		return (
 			<div className="flex justify-center items-center py-10 font-montserrat">
-				Загрузка информации о контракте...
+				Loading contract information...
 			</div>
 		);
 	}
@@ -118,7 +118,7 @@ export default function ContractInfo() {
 	if (error) {
 		return (
 			<div className="bg-red-50 border border-red-200 rounded-lg p-6 text-red-700 font-montserrat">
-				<h3 className="text-lg font-semibold mb-2">Ошибка</h3>
+				<h3 className="text-lg font-semibold mb-2">Error</h3>
 				<p>{error}</p>
 			</div>
 		);
@@ -127,39 +127,39 @@ export default function ContractInfo() {
 	if (!contractInfo) {
 		return (
 			<div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 font-montserrat">
-				<p>Информация о контракте недоступна.</p>
+				<p>Contract information is not available.</p>
 			</div>
 		);
 	}
 
 	return (
 		<div className="font-montserrat">
-			<h2 className="text-2xl font-semibold mb-6">Информация о токене</h2>
+			<h2 className="text-2xl font-semibold mb-6">Token Information</h2>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<div className="space-y-4">
 					<div>
 						<h3 className="text-sm font-medium text-gray-500">
-							Адрес контракта
+							Contract Address
 						</h3>
 						<p className="mt-1 break-all">{SONIC_TOKEN_ADDRESS}</p>
 					</div>
 
 					<div>
 						<h3 className="text-sm font-medium text-gray-500">
-							Название токена
+							Token Name
 						</h3>
 						<p className="mt-1">{contractInfo.name}</p>
 					</div>
 
 					<div>
-						<h3 className="text-sm font-medium text-gray-500">Символ</h3>
+						<h3 className="text-sm font-medium text-gray-500">Symbol</h3>
 						<p className="mt-1">{contractInfo.symbol}</p>
 					</div>
 
 					<div>
 						<h3 className="text-sm font-medium text-gray-500">
-							Десятичные знаки
+							Decimals
 						</h3>
 						<p className="mt-1">{contractInfo.decimals}</p>
 					</div>
@@ -168,7 +168,7 @@ export default function ContractInfo() {
 				<div className="space-y-4">
 					<div>
 						<h3 className="text-sm font-medium text-gray-500">
-							Общее предложение
+							Total Supply
 						</h3>
 						<p className="mt-1">
 							{contractInfo.totalSupply} {contractInfo.symbol}
@@ -177,18 +177,18 @@ export default function ContractInfo() {
 
 					<div>
 						<h3 className="text-sm font-medium text-gray-500">
-							Владелец контракта
+							Contract Owner
 						</h3>
 						<p className="mt-1 break-all">{contractInfo.ownerAddress}</p>
 						{contractInfo.isOwner && (
 							<span className="inline-block mt-1 text-xs px-2 py-1 bg-green-100 text-green-800 rounded">
-								Вы являетесь владельцем контракта
+								You are the contract owner
 							</span>
 						)}
 					</div>
 
 					<div>
-						<h3 className="text-sm font-medium text-gray-500">Ваш баланс</h3>
+						<h3 className="text-sm font-medium text-gray-500">Your Balance</h3>
 						<p className="mt-1">
 							{contractInfo.userBalance} {contractInfo.symbol}
 						</p>

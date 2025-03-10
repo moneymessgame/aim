@@ -35,7 +35,7 @@ export default function Header() {
 							>
 								Home
 							</Link>
-							<Link
+							{/* <Link
 								href="/agent"
 								className={`px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-50 transition ${
 									pathname === '/agent'
@@ -44,7 +44,7 @@ export default function Header() {
 								}`}
 							>
 								Agent
-							</Link>
+							</Link> */}
 							<Link
 								href="/contract"
 								className={`px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-50 transition ${
@@ -88,12 +88,12 @@ export default function Header() {
 						</nav>
 					)}
 				</div>
-
+				
 				<div className="flex items-center">
 					<UserDropdown />
+					<LanguageSwitcher />
+					<ThemeSwitcher />
 				</div>
-				<LanguageSwitcher />
-				<ThemeSwitcher />
 			</div>
 		</header>
 	);

@@ -5,7 +5,7 @@ import { formatEther } from 'viem'
 import { SONIC_TOKEN_ADDRESS } from '../../lib/config'
 import { useEffect, useState } from 'react'
 
-// ABI для ERC20 токена (минимальный для чтения баланса)
+// ABI for ERC20 token (minimal for reading balance)
 const erc20ABI = [
   {
     inputs: [{ name: 'account', type: 'address' }],
@@ -75,25 +75,25 @@ export function WalletBalance() {
 
   return (
     <div className="font-montserrat bg-gray-50 p-4 rounded-lg shadow-sm flex flex-col gap-3 min-w-[300px]">
-      <h2 className="text-xl font-semibold">Баланс кошелька</h2>
+      <h2 className="text-xl font-semibold">Wallet Balance</h2>
       <div className="flex flex-col gap-2">
         <div className="flex justify-between items-center">
-          <span className="text-gray-500">Основная валюта:</span>
+          <span className="text-gray-500">Main Currency:</span>
           <span className="font-medium">
-            {balance ? `${Number(balance.formatted).toFixed(4)} ${balance.symbol}` : 'Загрузка...'}
+            {balance ? `${Number(balance.formatted).toFixed(4)} ${balance.symbol}` : 'Loading...'}
           </span>
         </div>
         
         <div className="flex justify-between items-center">
-          <span className="text-gray-500">Токены Sonic:</span>
+          <span className="text-gray-500">Sonic Tokens:</span>
           <span className="font-medium">
-            {tokenBalance ? `${formattedTokenBalance} ${tokenSymbol || 'SONIC'}` : 'Загрузка...'}
+            {tokenBalance ? `${formattedTokenBalance} ${tokenSymbol || 'SONIC'}` : 'Loading...'}
           </span>
         </div>
       </div>
       
       <div className="mt-2 text-xs text-gray-400">
-        Сеть: Sonic Blaze Testnet
+        Network: Sonic Blaze Testnet
       </div>
     </div>
   )

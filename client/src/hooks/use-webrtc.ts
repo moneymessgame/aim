@@ -4,11 +4,18 @@ import { useState, useRef, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Conversation } from "@/lib/conversations";
 import { useTranslations } from "@/components/translations-context";
+import { useNavigation } from "@/lib/navigation-utils";
 
 export interface Tool {
   name: string;
   description: string;
-  parameters?: Record<string, any>;
+  parameters?: Record<string, unknown>;
+}
+
+// Расширяем интерфейс Conversation для поддержки команд
+export interface CommandInfo {
+  isCommand?: boolean;
+  commandType?: string;
 }
 
 /**
@@ -22,8 +29,8 @@ interface UseWebRTCAudioSessionReturn {
   startSession: () => Promise<void>;
   stopSession: () => void;
   handleStartStopClick: () => void;
-  registerFunction: (name: string, fn: Function) => void;
-  msgs: any[];
+  registerFunction: (name: string, fn: (...args: unknown[]) => unknown) => void;
+  msgs: Record<string, unknown>[];
   currentVolume: number;
   conversation: Conversation[];
   sendTextMessage: (text: string) => void;
@@ -36,6 +43,7 @@ export default function useWebRTCAudioSession(
   voice: string,
   tools?: Tool[],
 ): UseWebRTCAudioSessionReturn {
+  const { navigateTo } = useNavigation();
   const { t, locale } = useTranslations();
   // Connection/session states
   const [status, setStatus] = useState("");
@@ -52,13 +60,13 @@ export default function useWebRTCAudioSession(
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
 
   // Keep track of all raw events/messages
-  const [msgs, setMsgs] = useState<any[]>([]);
+  const [msgs, setMsgs] = useState<Record<string, unknown>[]>([]);
 
   // Main conversation state
   const [conversation, setConversation] = useState<Conversation[]>([]);
 
   // For function calls (AI "tools")
-  const functionRegistry = useRef<Record<string, Function>>({});
+  const functionRegistry = useRef<Record<string, (...args: unknown[]) => unknown>>({});
 
   // Volume analysis (assistant inbound audio)
   const [currentVolume, setCurrentVolume] = useState(0);
@@ -221,10 +229,16 @@ export default function useWebRTCAudioSession(
          */
         case "conversation.item.input_audio_transcription.completed": {
           // console.log("Final user transcription:", msg.transcript);
+          const transcript = msg.transcript || "";
+          
+          // Проверяем, является ли сообщение командой навигации
+          const isNavigationCommand = navigateTo(transcript);
+          
           updateEphemeralUserMessage({
-            text: msg.transcript || "",
+            text: transcript,
             isFinal: true,
             status: "final",
+            isCommand: isNavigationCommand,
           });
           clearEphemeralUserMessage();
           break;
@@ -516,6 +530,40 @@ export default function useWebRTCAudioSession(
   function sendTextMessage(text: string) {
     if (!dataChannelRef.current || dataChannelRef.current.readyState !== "open") {
       console.error("Data channel not ready");
+      return;
+    }
+
+    // Проверяем, является ли сообщение командой навигации
+    const isNavigationCommand = navigateTo(text);
+    
+    // Если это команда навигации, добавляем сообщение и ответ ассистента
+    if (isNavigationCommand) {
+      const userMessageId = uuidv4();
+      const assistantMessageId = uuidv4();
+      
+      // Добавляем сообщение пользователя в историю разговора как команду
+      const userMessage: Conversation = {
+        id: userMessageId,
+        role: "user",
+        text,
+        timestamp: new Date().toISOString(),
+        isFinal: true,
+        status: "final",
+        isCommand: true,
+        commandType: "navigation"
+      };
+      
+      // Добавляем ответ ассистента о выполнении команды
+      const assistantMessage: Conversation = {
+        id: assistantMessageId,
+        role: "assistant",
+        text: "Команда выполнена. Переход на указанную страницу.",
+        timestamp: new Date().toISOString(),
+        isFinal: true,
+        status: "final",
+      };
+      
+      setConversation(prev => [...prev, userMessage, assistantMessage]);
       return;
     }
 

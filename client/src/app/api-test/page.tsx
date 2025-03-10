@@ -29,17 +29,17 @@ export default function ApiTestPage() {
   const [showApiLogs, setShowApiLogs] = useState<boolean>(false);
   const [serverAvailability, setServerAvailability] = useState<{ available: boolean; message: string } | null>(null);
 
-  // Загрузка данных при монтировании компонента
+  // Load data when component mounts
   useEffect(() => {
-    // Проверяем доступность сервера перед загрузкой данных
+    // Check server availability before loading data
     checkServerAvailability();
     
-    // Обновляем логи каждые 2 секунды
+    // Update logs every 2 seconds
     const logsInterval = setInterval(() => {
       setApiLogs(ZerePyAPI.getApiLogs());
     }, 2000);
     
-    // Проверяем доступность сервера каждые 10 секунд
+    // Check server availability every 10 seconds
     const availabilityInterval = setInterval(() => {
       checkServerAvailability();
     }, 10000);
@@ -50,34 +50,34 @@ export default function ApiTestPage() {
     };
   }, []);
 
-  // Загрузка действий при выборе подключения
+  // Load actions when connection is selected
   useEffect(() => {
     if (selectedConnection) {
       fetchConnectionActions(selectedConnection);
     }
   }, [selectedConnection]);
 
-  // Проверка доступности сервера
+  // Check server availability
   const checkServerAvailability = async () => {
     try {
       setLoading((prev) => ({ ...prev, serverAvailability: true }));
       const availability = await ZerePyAPI.checkServerAvailability();
       setServerAvailability(availability);
       
-      // Если сервер доступен, загружаем данные
+      // If server is available, load data
       if (availability.available) {
         fetchServerStatus();
         fetchAgents();
         fetchConnections();
       }
     } catch (error) {
-      setServerAvailability({ available: false, message: 'Ошибка при проверке доступности сервера' });
+      setServerAvailability({ available: false, message: 'Error checking server availability' });
     } finally {
       setLoading((prev) => ({ ...prev, serverAvailability: false }));
     }
   };
   
-  // Получение статуса сервера
+  // Get server status
   const fetchServerStatus = async () => {
     try {
       setLoading((prev) => ({ ...prev, serverStatus: true }));
@@ -85,14 +85,14 @@ export default function ApiTestPage() {
       setServerStatus(status);
       setErrors((prev) => ({ ...prev, serverStatus: '' }));
     } catch (error) {
-      setErrors((prev) => ({ ...prev, serverStatus: 'Ошибка при получении статуса сервера' }));
-      console.error('Ошибка при получении статуса сервера:', error);
+      setErrors((prev) => ({ ...prev, serverStatus: 'Error getting server status' }));
+      console.error('Error getting server status:', error);
     } finally {
       setLoading((prev) => ({ ...prev, serverStatus: false }));
     }
   };
 
-  // Получение списка агентов
+  // Get agents list
   const fetchAgents = async () => {
     try {
       setLoading((prev) => ({ ...prev, agents: true }));
@@ -100,33 +100,33 @@ export default function ApiTestPage() {
       setAgents(agentsList);
       setErrors((prev) => ({ ...prev, agents: '' }));
     } catch (error) {
-      setErrors((prev) => ({ ...prev, agents: 'Ошибка при получении списка агентов' }));
-      console.error('Ошибка при получении списка агентов:', error);
+      setErrors((prev) => ({ ...prev, agents: 'Error getting agents list' }));
+      console.error('Error getting agents list:', error);
     } finally {
       setLoading((prev) => ({ ...prev, agents: false }));
     }
   };
 
-  // Загрузка агента
+  // Load agent
   const handleLoadAgent = async (name: string) => {
     try {
       setLoading((prev) => ({ ...prev, loadAgent: true }));
       const result = await ZerePyAPI.loadAgent(name);
       if (result.success) {
-        alert(`Агент ${name} успешно загружен: ${result.message}`);
+        alert(`Agent ${name} successfully loaded: ${result.message}`);
       } else {
-        alert(`Ошибка при загрузке агента ${name}: ${result.message}`);
+        alert(`Error loading agent ${name}: ${result.message}`);
       }
       setErrors((prev) => ({ ...prev, loadAgent: '' }));
     } catch (error) {
-      setErrors((prev) => ({ ...prev, loadAgent: `Ошибка при загрузке агента ${name}` }));
-      console.error(`Ошибка при загрузке агента ${name}:`, error);
+      setErrors((prev) => ({ ...prev, loadAgent: `Error loading agent ${name}` }));
+      console.error(`Error loading agent ${name}:`, error);
     } finally {
       setLoading((prev) => ({ ...prev, loadAgent: false }));
     }
   };
 
-  // Получение списка подключений
+  // Get connections list
   const fetchConnections = async () => {
     try {
       setLoading((prev) => ({ ...prev, connections: true }));
@@ -134,14 +134,14 @@ export default function ApiTestPage() {
       setConnections(connectionsList);
       setErrors((prev) => ({ ...prev, connections: '' }));
     } catch (error) {
-      setErrors((prev) => ({ ...prev, connections: 'Ошибка при получении списка подключений' }));
-      console.error('Ошибка при получении списка подключений:', error);
+      setErrors((prev) => ({ ...prev, connections: 'Error getting connections list' }));
+      console.error('Error getting connections list:', error);
     } finally {
       setLoading((prev) => ({ ...prev, connections: false }));
     }
   };
 
-  // Получение действий для выбранного подключения
+  // Get actions for selected connection
   const fetchConnectionActions = async (connectionName: string) => {
     try {
       setLoading((prev) => ({ ...prev, connectionActions: true }));
@@ -149,17 +149,17 @@ export default function ApiTestPage() {
       setConnectionActions(actions);
       setErrors((prev) => ({ ...prev, connectionActions: '' }));
     } catch (error) {
-      setErrors((prev) => ({ ...prev, connectionActions: `Ошибка при получении действий для подключения ${connectionName}` }));
-      console.error(`Ошибка при получении действий для подключения ${connectionName}:`, error);
+      setErrors((prev) => ({ ...prev, connectionActions: `Error getting actions for connection ${connectionName}` }));
+      console.error(`Error getting actions for connection ${connectionName}:`, error);
     } finally {
       setLoading((prev) => ({ ...prev, connectionActions: false }));
     }
   };
 
-  // Выполнение действия агента
+  // Execute agent action
   const handleExecuteAction = async () => {
     if (!selectedConnection || !selectedAction) {
-      alert('Выберите подключение и действие');
+      alert('Select a connection and action');
       return;
     }
 
@@ -176,14 +176,14 @@ export default function ApiTestPage() {
       setActionResponse(response);
       setErrors((prev) => ({ ...prev, executeAction: '' }));
     } catch (error) {
-      setErrors((prev) => ({ ...prev, executeAction: 'Ошибка при выполнении действия' }));
-      console.error('Ошибка при выполнении действия:', error);
+      setErrors((prev) => ({ ...prev, executeAction: 'Error executing action' }));
+      console.error('Error executing action:', error);
     } finally {
       setLoading((prev) => ({ ...prev, executeAction: false }));
     }
   };
 
-  // Запуск цикла агента
+  // Start agent loop
   const handleStartAgentLoop = async () => {
     try {
       setLoading((prev) => ({ ...prev, agentLoop: true }));
@@ -191,14 +191,14 @@ export default function ApiTestPage() {
       setAgentLoopStatus(status);
       setErrors((prev) => ({ ...prev, agentLoop: '' }));
     } catch (error) {
-      setErrors((prev) => ({ ...prev, agentLoop: 'Ошибка при запуске цикла агента' }));
-      console.error('Ошибка при запуске цикла агента:', error);
+      setErrors((prev) => ({ ...prev, agentLoop: 'Error starting agent loop' }));
+      console.error('Error starting agent loop:', error);
     } finally {
       setLoading((prev) => ({ ...prev, agentLoop: false }));
     }
   };
 
-  // Остановка цикла агента
+  // Stop agent loop
   const handleStopAgentLoop = async () => {
     try {
       setLoading((prev) => ({ ...prev, agentLoop: true }));
@@ -206,14 +206,14 @@ export default function ApiTestPage() {
       setAgentLoopStatus(status);
       setErrors((prev) => ({ ...prev, agentLoop: '' }));
     } catch (error) {
-      setErrors((prev) => ({ ...prev, agentLoop: 'Ошибка при остановке цикла агента' }));
-      console.error('Ошибка при остановке цикла агента:', error);
+      setErrors((prev) => ({ ...prev, agentLoop: 'Error stopping agent loop' }));
+      console.error('Error stopping agent loop:', error);
     } finally {
       setLoading((prev) => ({ ...prev, agentLoop: false }));
     }
   };
 
-  // Обработка изменения параметров действия
+  // Handle action parameter changes
   const handleParameterChange = (paramName: string, value: string) => {
     setActionParameters((prev) => ({ ...prev, [paramName]: value }));
   };
@@ -222,19 +222,19 @@ export default function ApiTestPage() {
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="mb-8">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-bold text-gray-800">Тестирование API ZerePy</h1>
+          <h1 className="text-3xl font-bold text-gray-800">ZerePy API Testing</h1>
           <a 
             href="/createagent" 
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
           >
-            Создать агента
+            Create Agent
           </a>
         </div>
         <p className="text-gray-700 mt-2">
-          Интерфейс для взаимодействия с API сервера ZerePy
+          Interface for interacting with ZerePy server API
         </p>
         
-        {/* Статус доступности сервера */}
+        {/* Server availability status */}
         {serverAvailability && (
           <div className={`mt-4 p-3 rounded ${serverAvailability.available ? 'bg-green-200 text-green-900' : 'bg-red-200 text-red-900'}`}>
             <div className="flex items-center">
@@ -249,7 +249,7 @@ export default function ApiTestPage() {
                   onClick={checkServerAvailability}
                   disabled={loading.serverAvailability}
                 >
-                  {loading.serverAvailability ? 'Проверка...' : 'Проверить снова'}
+                  {loading.serverAvailability ? 'Checking...' : 'Check again'}
                 </button>
               </div>
             )}
@@ -258,37 +258,37 @@ export default function ApiTestPage() {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Статус сервера */}
+        {/* Server status */}
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Статус сервера</h2>
+          <h2 className="text-xl font-semibold mb-4">Server Status</h2>
           <button 
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mb-4"
             onClick={fetchServerStatus}
             disabled={loading.serverStatus}
           >
-            {loading.serverStatus ? 'Загрузка...' : 'Обновить статус'}
+            {loading.serverStatus ? 'Loading...' : 'Update Status'}
           </button>
           
           {errors.serverStatus && <p className="text-red-600 font-medium mb-2">{errors.serverStatus}</p>}
           
           {serverStatus && (
             <div className="border p-4 rounded">
-              <p><strong>Статус:</strong> {serverStatus.status}</p>
-              <p><strong>Версия:</strong> {serverStatus.version}</p>
-              <p><strong>Время работы:</strong> {serverStatus.uptime} секунд</p>
+              <p><strong>Status:</strong> {serverStatus.status}</p>
+              <p><strong>Version:</strong> {serverStatus.version}</p>
+              <p><strong>Uptime:</strong> {serverStatus.uptime} seconds</p>
             </div>
           )}
         </div>
 
-        {/* Список агентов */}
+        {/* Agents list */}
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Доступные агенты</h2>
+          <h2 className="text-xl font-semibold mb-4">Available Agents</h2>
           <button 
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mb-4"
             onClick={fetchAgents}
             disabled={loading.agents}
           >
-            {loading.agents ? 'Загрузка...' : 'Получить агентов'}
+            {loading.agents ? 'Loading...' : 'Get Agents'}
           </button>
           
           {errors.agents && <p className="text-red-600 font-medium mb-2">{errors.agents}</p>}
@@ -306,30 +306,30 @@ export default function ApiTestPage() {
                     onClick={() => handleLoadAgent(agent.name)}
                     disabled={loading.loadAgent}
                   >
-                    Загрузить
+                    Load
                   </button>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="text-gray-600">Нет доступных агентов</p>
+            <p className="text-gray-600">No available agents</p>
           )}
         </div>
 
-        {/* Подключения и действия */}
+        {/* Connections and actions */}
         <div className="bg-white rounded-lg shadow-lg p-6 md:col-span-2">
-          <h2 className="text-xl font-semibold mb-4">Подключения и действия</h2>
+          <h2 className="text-xl font-semibold mb-4">Connections and Actions</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            {/* Список подключений */}
+            {/* Connections list */}
             <div>
-              <h3 className="font-medium mb-2">Доступные подключения</h3>
+              <h3 className="font-medium mb-2">Available Connections</h3>
               <button 
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mb-4"
                 onClick={fetchConnections}
                 disabled={loading.connections}
               >
-                {loading.connections ? 'Загрузка...' : 'Получить подключения'}
+                {loading.connections ? 'Loading...' : 'Get Connections'}
               </button>
               
               {errors.connections && <p className="text-red-600 font-medium mb-2">{errors.connections}</p>}
@@ -340,7 +340,7 @@ export default function ApiTestPage() {
                   value={selectedConnection}
                   onChange={(e) => setSelectedConnection(e.target.value)}
                 >
-                  <option value="">Выберите подключение</option>
+                  <option value="">Select a connection</option>
                   {connections.map((connection) => (
                     <option key={connection.name} value={connection.name}>
                       {connection.name} ({connection.status})
@@ -348,13 +348,13 @@ export default function ApiTestPage() {
                   ))}
                 </select>
               ) : (
-                <p className="text-gray-600">Нет доступных подключений</p>
+                <p className="text-gray-600">No available connections</p>
               )}
             </div>
 
-            {/* Действия для выбранного подключения */}
+            {/* Actions for selected connection */}
             <div>
-              <h3 className="font-medium mb-2">Действия</h3>
+              <h3 className="font-medium mb-2">Actions</h3>
               
               {errors.connectionActions && (
                 <p className="text-red-600 font-medium mb-2">{errors.connectionActions}</p>
@@ -362,14 +362,14 @@ export default function ApiTestPage() {
               
               {selectedConnection ? (
                 loading.connectionActions ? (
-                  <p>Загрузка действий...</p>
+                  <p>Loading actions...</p>
                 ) : connectionActions.length > 0 ? (
                   <select
                     className="w-full p-2 border rounded"
                     value={selectedAction}
                     onChange={(e) => setSelectedAction(e.target.value)}
                   >
-                    <option value="">Выберите действие</option>
+                    <option value="">Select an action</option>
                     {connectionActions.map((action) => (
                       <option key={action.name} value={action.name}>
                         {action.name}
@@ -377,18 +377,18 @@ export default function ApiTestPage() {
                     ))}
                   </select>
                 ) : (
-                  <p className="text-gray-600">Нет доступных действий</p>
+                  <p className="text-gray-600">No available actions</p>
                 )
               ) : (
-                <p className="text-gray-600">Сначала выберите подключение</p>
+                <p className="text-gray-600">Select a connection first</p>
               )}
             </div>
           </div>
 
-          {/* Параметры для выбранного действия */}
+          {/* Parameters for selected action */}
           {selectedAction && connectionActions.length > 0 && (
             <div className="mb-6">
-              <h3 className="font-medium mb-2">Параметры действия</h3>
+              <h3 className="font-medium mb-2">Action Parameters</h3>
               
               {(() => {
                 const selectedActionData = connectionActions.find(
@@ -396,7 +396,7 @@ export default function ApiTestPage() {
                 );
                 
                 if (!selectedActionData || !selectedActionData.parameters.length) {
-                  return <p className="text-gray-600">Нет параметров для этого действия</p>;
+                  return <p className="text-gray-600">No parameters for this action</p>;
                 }
                 
                 return (
@@ -423,21 +423,21 @@ export default function ApiTestPage() {
             </div>
           )}
 
-          {/* Кнопка выполнения действия */}
+          {/* Execute action button */}
           {selectedConnection && selectedAction && (
             <button
               className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               onClick={handleExecuteAction}
               disabled={loading.executeAction}
             >
-              {loading.executeAction ? 'Выполнение...' : 'Выполнить действие'}
+              {loading.executeAction ? 'Executing...' : 'Execute Action'}
             </button>
           )}
 
-          {/* Результат выполнения действия */}
+          {/* Action execution result */}
           {actionResponse && (
             <div className="mt-6 p-4 border rounded">
-              <h3 className="font-medium mb-2">Результат выполнения</h3>
+              <h3 className="font-medium mb-2">Execution Result</h3>
               <pre className="bg-gray-100 p-3 rounded overflow-x-auto">
                 {JSON.stringify(actionResponse, null, 2)}
               </pre>
@@ -445,9 +445,9 @@ export default function ApiTestPage() {
           )}
         </div>
 
-        {/* Управление циклом агента */}
+        {/* Agent loop control */}
         <div className="bg-white rounded-lg shadow-lg p-6 md:col-span-2">
-          <h2 className="text-xl font-semibold mb-4">Управление циклом агента</h2>
+          <h2 className="text-xl font-semibold mb-4">Agent Loop Control</h2>
           
           <div className="flex space-x-4 mb-4">
             <button
@@ -455,7 +455,7 @@ export default function ApiTestPage() {
               onClick={handleStartAgentLoop}
               disabled={loading.agentLoop}
             >
-              Запустить цикл
+              Start Loop
             </button>
             
             <button
@@ -463,7 +463,7 @@ export default function ApiTestPage() {
               onClick={handleStopAgentLoop}
               disabled={loading.agentLoop}
             >
-              Остановить цикл
+              Stop Loop
             </button>
           </div>
           
@@ -472,7 +472,7 @@ export default function ApiTestPage() {
           {agentLoopStatus && (
             <div className="p-4 border rounded">
               <p>
-                <strong>Статус:</strong>{' '}
+                <strong>Status:</strong>{' '}
                 <span
                   className={
                     agentLoopStatus.status === 'started'
@@ -480,25 +480,25 @@ export default function ApiTestPage() {
                       : 'text-red-600'
                   }
                 >
-                  {agentLoopStatus.status === 'started' ? 'Запущен' : 'Остановлен'}
+                  {agentLoopStatus.status === 'started' ? 'Running' : 'Stopped'}
                 </span>
               </p>
-              <p><strong>Сообщение:</strong> {agentLoopStatus.message}</p>
+              <p><strong>Message:</strong> {agentLoopStatus.message}</p>
             </div>
           )}
         </div>
       </div>
       
-      {/* Панель логов API */}
+      {/* API logs panel */}
       <div className="mt-8 bg-white rounded-lg shadow-lg p-6 md:col-span-2">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Логи API</h2>
+          <h2 className="text-xl font-semibold">API Logs</h2>
           <div className="flex space-x-2">
             <button
               className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
               onClick={() => setShowApiLogs(!showApiLogs)}
             >
-              {showApiLogs ? 'Скрыть логи' : 'Показать логи'}
+              {showApiLogs ? 'Hide Logs' : 'Show Logs'}
             </button>
             <button
               className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
@@ -507,7 +507,7 @@ export default function ApiTestPage() {
                 setApiLogs([]);
               }}
             >
-              Очистить логи
+              Clear Logs
             </button>
           </div>
         </div>
@@ -515,14 +515,14 @@ export default function ApiTestPage() {
         {showApiLogs && (
           <div className="mt-4">
             {apiLogs.length === 0 ? (
-              <p className="text-gray-700">Нет доступных логов API</p>
+              <p className="text-gray-700">No API logs available</p>
             ) : (
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {apiLogs.map((log) => (
                   <div key={log.id} className="border p-4 rounded">
                     <div className="flex justify-between items-center mb-2">
                       <h3 className="font-medium">
-                        Эндпоинт: <span className="text-blue-600">{log.endpoint}</span>
+                        Endpoint: <span className="text-blue-600">{log.endpoint}</span>
                       </h3>
                       <span className="text-xs text-gray-700">
                         {new Date(log.timestamp).toLocaleString()}

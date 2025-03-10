@@ -29,21 +29,21 @@ export default function TransactionHistory() {
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
 	const [decimals, setDecimals] = useState(18);
 
-	// Флаг для отслеживания запущенных запросов
+	// Flag to track active requests
 	const [isLoadingInProgress, setIsLoadingInProgress] = useState(false);
-	// Флаг для отслеживания, были ли когда-либо загружены транзакции
+	// Flag to track if transactions were ever loaded
 	const [hasAttemptedLoad, setHasAttemptedLoad] = useState(false);
 
-	// Мемоизируем функцию загрузки истории транзакций
+	// Memoize the transaction history loading function
 	const fetchTransactionHistory = useCallback(async () => {
 		if (!address) return;
 
-		// Проверяем, чтобы не запускать повторные запросы
+		// Check to avoid duplicate requests
 		if (isLoadingInProgress) return;
 
-		// Устанавливаем флаг, что загрузка в процессе
+		// Set flag that loading is in progress
 		setIsLoadingInProgress(true);
-		// Показываем загрузку только при первой попытке
+		// Show loading only on first attempt
 		if (!hasAttemptedLoad) {
 			setLoading(true);
 		}
@@ -52,27 +52,27 @@ export default function TransactionHistory() {
 		try {
 			const { contract, provider } = await getSonicTokenContract();
 
-			// Получаем десятичные знаки
+			// Get token decimals
 			const tokenDecimals = await contract.decimals();
 			setDecimals(tokenDecimals);
 
-			// В ethers.js v6 изменились методы работы с событиями
-			// Для предотвращения ошибки таймаута, запрашиваем только последние 1000 блоков
+			// In ethers.js v6, event handling methods have changed
+			// To prevent timeout errors, we only request the last 1000 blocks
 			const currentBlock = await provider.getBlockNumber();
-			// Используем ограниченный диапазон из последней 1000 блоков
+			// Use a limited range of the last 1000 blocks
 			const fromBlock = Math.max(0, currentBlock - 1000);
 
-			// Определяем фильтр события Transfer, который имеет подпись 'Transfer(address,address,uint256)'
-			// Получаем события напрямую, без использования filters
+			// Define the Transfer event filter with signature 'Transfer(address,address,uint256)'
+			// Get events directly without using filters
 			const transferEventSignature = 'Transfer(address,address,uint256)';
 			const transferEventHash = ethers.id(transferEventSignature);
 
-			// Получаем события конкретного контракта в ограниченном диапазоне блоков
+			// Get events for a specific contract in a limited block range
 			console.log(
-				`Запрашиваем события с блока ${fromBlock} до ${currentBlock}`
+				`Requesting events from block ${fromBlock} to ${currentBlock}`
 			);
 
-			// Используем текущий адрес контракта
+			// Use the current contract address
 			const logs = await provider.getLogs({
 				address: SONIC_TOKEN_ADDRESS,
 				topics: [transferEventHash],
@@ -80,36 +80,36 @@ export default function TransactionHistory() {
 				toBlock: currentBlock,
 			});
 
-			console.log(`Найдено ${logs.length} событий Transfer`);
+			console.log(`Found ${logs.length} Transfer events`);
 
-			// Форматируем транзакции
+			// Format transactions
 			const txPromises = logs.map(async (log) => {
 				const block = await provider.getBlock(log.blockNumber);
 
-				// Декодируем данные события
-				// В Transfer(address,address,uint256) первая тема (индекс 0) - это хеш сигнатуры события
-				// Вторая тема (индекс 1) - это from адрес (первый индексированный параметр)
-				// Третья тема (индекс 2) - это to адрес (второй индексированный параметр)
-				// data содержит неиндексированные параметры (value)
+				// Decode event data
+				// In Transfer(address,address,uint256) the first topic (index 0) is the event signature hash
+				// The second topic (index 1) is the from address (first indexed parameter)
+				// The third topic (index 2) is the to address (second indexed parameter)
+				// data contains non-indexed parameters (value)
 
-				// Извлекаем адреса из topics, удаляя первые 12 байтов
+				// Extract addresses from topics, removing the first 12 bytes
 				const from =
-					log.topics && log.topics[1]
+					log.topics?.[1]
 						? `0x${log.topics[1].slice(26)}`
 						: '0x0000000000000000000000000000000000000000';
 
 				const to =
-					log.topics && log.topics[2]
+					log.topics?.[2]
 						? `0x${log.topics[2].slice(26)}`
 						: '0x0000000000000000000000000000000000000000';
 
-				// Пытаемся декодировать значение из data
+				// Try to decode the value from data
 				let value = BigInt(0);
 				if (log.data && log.data !== '0x') {
 					value = BigInt(log.data);
 				}
 
-				// Проверяем, является ли это минтингом (from = 0x0)
+				// Check if this is a minting event (from = 0x0)
 				const isTransfer =
 					from !== '0x0000000000000000000000000000000000000000';
 
@@ -126,33 +126,33 @@ export default function TransactionHistory() {
 
 			const formattedTxs = await Promise.all(txPromises);
 
-			// Сортируем по времени (сначала новые)
+			// Sort by timestamp (newest first)
 			formattedTxs.sort((a, b) => b.timestamp - a.timestamp);
 
-			console.log(`Отформатировано ${formattedTxs.length} транзакций`);
+			console.log(`Formatted ${formattedTxs.length} transactions`);
 
-			// Сохраняем отсортированные транзакции
+			// Save sorted transactions
 			setTransactions(formattedTxs);
-			// Отмечаем, что попытка загрузки была сделана
+			// Mark that a load attempt was made
 			setHasAttemptedLoad(true);
 		} catch (err) {
-			console.error('Ошибка при получении истории транзакций:', err);
+			console.error('Error retrieving transaction history:', err);
 			setError(
-				'Не удалось загрузить историю транзакций. Попробуйте перезагрузить страницу.'
+				'Failed to load transaction history. Please try refreshing the page.'
 			);
 		} finally {
 			setLoading(false);
 			setIsLoadingInProgress(false);
 		}
-	}, [address, error, getSonicTokenContract, loading, transactions]);
+	}, [address, getSonicTokenContract, hasAttemptedLoad, isLoadingInProgress]);
 
-	// Используем useEffect только для начальной загрузки и при изменении адреса
+	// Use useEffect only for initial loading and when address changes
 	useEffect(() => {
 		let mounted = true;
 
-		// Загружаем данные только если компонент смонтирован и есть адрес
+		// Load data only if component is mounted and address exists
 		if (address && mounted) {
-			// Откладываем загрузку немного, чтобы избежать проблем с параллельными запросами
+			// Delay loading slightly to avoid issues with parallel requests
 			const timer = setTimeout(() => {
 				if (mounted) {
 					fetchTransactionHistory();
@@ -170,7 +170,7 @@ export default function TransactionHistory() {
 		};
 	}, [address, fetchTransactionHistory]);
 
-	// Убрали автообновление, чтобы избежать смещения компонентов
+	// Removed auto-refresh to avoid component shifting
 
 	const formatAddress = (addr: string) => {
 		return `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
@@ -188,13 +188,13 @@ export default function TransactionHistory() {
 
 	const formatTimestamp = (timestamp: number) => {
 		const date = new Date(timestamp * 1000);
-		return date.toLocaleString('ru-RU');
+		return date.toLocaleString('en-US');
 	};
 
 	if (loading && !hasAttemptedLoad) {
 		return (
 			<div className="flex justify-center items-center py-10 font-montserrat">
-				Загрузка истории транзакций...
+				Loading transaction history...
 			</div>
 		);
 	}
@@ -202,24 +202,24 @@ export default function TransactionHistory() {
 	if (error) {
 		return (
 			<div className="bg-red-50 border border-red-200 rounded-lg p-6 text-red-700 font-montserrat">
-				<h3 className="text-lg font-semibold mb-2">Ошибка</h3>
+				<h3 className="text-lg font-semibold mb-2">Error</h3>
 				<p>{error}</p>
 			</div>
 		);
 	}
 
-	// Показываем основной интерфейс даже если транзакций нет
-	// но с соответствующим сообщением внутри
+	// Show the main interface even if there are no transactions
+	// but with an appropriate message inside
 
 	return (
 		<div className="font-montserrat">
-			<h2 className="text-2xl font-semibold mb-6">История транзакций</h2>
+			<h2 className="text-2xl font-semibold mb-6">Transaction History</h2>
 
-			{/* Индикатор загрузки будет показан только при начальной загрузке */}
+			{/* Loading indicator will only be shown during initial loading */}
 
 			{transactions.length === 0 && hasAttemptedLoad ? (
 				<div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-4 font-montserrat">
-					<p>Транзакции не найдены за последний период.</p>
+					<p>No transactions found for the recent period.</p>
 				</div>
 			) : (
 				<div className="overflow-x-auto">
@@ -230,37 +230,37 @@ export default function TransactionHistory() {
 									scope="col"
 									className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 								>
-									Тип
+									Type
 								</th>
 								<th
 									scope="col"
 									className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 								>
-									Хэш транзакции
+									Transaction Hash
 								</th>
 								<th
 									scope="col"
 									className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 								>
-									Время
+									Time
 								</th>
 								<th
 									scope="col"
 									className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 								>
-									От кого
+									From
 								</th>
 								<th
 									scope="col"
 									className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 								>
-									Кому
+									To
 								</th>
 								<th
 									scope="col"
 									className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 								>
-									Сумма
+									Amount
 								</th>
 							</tr>
 						</thead>
@@ -275,7 +275,7 @@ export default function TransactionHistory() {
 													: 'bg-blue-100 text-blue-800'
 											}`}
 										>
-											{tx.event === 'mint' ? 'Выпуск' : 'Перевод'}
+											{tx.event === 'mint' ? 'Mint' : 'Transfer'}
 										</span>
 									</td>
 									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

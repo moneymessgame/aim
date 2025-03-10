@@ -181,7 +181,7 @@ export default function TransactionHistory() {
   }
 
   if (loading && !hasAttemptedLoad) {
-    return <div className="flex justify-center items-center py-10 font-montserrat">Загрузка истории транзакций...</div>
+    return <div className="flex justify-center items-center py-10 font-montserrat">Loading transaction history...</div>
   }
   
   if (error) {

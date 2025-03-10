@@ -152,7 +152,7 @@ export function UserDropdown() {
         <div className="flex items-center">
           <button 
             onClick={handleNetworkInfoToggle}
-            className="text-sm bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-l-md font-medium transition mr-px"
+            className="text-sm bg-white hover:bg-slate-100 px-3 py-1.5 rounded-l-md font-medium transition mr-px border"
           >
             <span className="inline-block h-2 w-2 bg-green-500 rounded-full mr-2"></span>
             {sonicBlazeChain.name}
@@ -160,7 +160,7 @@ export function UserDropdown() {
           
           <button 
             onClick={handleUserDropdownToggle}
-            className="text-sm bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-r-md font-medium transition user-dropdown"
+            className="text-sm bg-white hover:bg-slate-100 px-3 py-1.5 rounded-r-md font-medium transition user-dropdown border"
           >
             {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Loading...'}
             <span className="ml-1">{isOpen ? '▲' : '▼'}</span>
@@ -168,7 +168,7 @@ export function UserDropdown() {
           
           {/* Information about the network */}
           {networkInfoOpen && (
-            <div className="absolute right-0 mt-1 top-full bg-white rounded-md shadow-lg p-4 z-10 w-80 network-info">
+            <div className="absolute right-0 mt-1 top-full bg-white rounded-md border shadow-md p-4 z-50 w-80 network-info">
               <h3 className="text-sm font-semibold mb-2">Network Information</h3>
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between">
@@ -204,7 +204,7 @@ export function UserDropdown() {
           
           {/* Выпадающее меню пользователя */}
           {isOpen && (
-            <div className="absolute right-0 mt-1 top-full bg-white rounded-md shadow-lg p-4 z-10 w-64 user-dropdown">
+            <div className="absolute right-0 mt-1 top-full bg-white rounded-md border shadow-md p-4 z-50 w-64 user-dropdown">
               <div 
                 onClick={copyAddressToClipboard}
                 className="flex justify-between cursor-pointer hover:bg-slate-50 p-2 rounded transition"

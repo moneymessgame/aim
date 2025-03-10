@@ -4,12 +4,6 @@ import React, { useEffect, useState } from "react"
 import useWebRTCAudioSession from "@/hooks/use-webrtc"
 import { tools } from "@/lib/tools"
 import { Welcome } from "@/components/welcome"
-import { VoiceSelector } from "@/components/voice-select"
-import { BroadcastButton } from "@/components/broadcast-button"
-import { StatusDisplay } from "@/components/status"
-import { TokenUsageDisplay } from "@/components/token-usage"
-import { MessageControls } from "@/components/message-controls"
-import { TextInput } from "@/components/text-input"
 import { motion } from "framer-motion"
 import { useToolsFunctions } from "@/hooks/use-tools"
 import { SlideCard, createDemoSlides } from "@/components/slide-card"
@@ -185,57 +179,17 @@ const App: React.FC = () => {
   return (
     <main className="w-screen h-full">
       <motion.div 
-        className="container mx-auto my-10 px-4 md:px-12"
+        className="container mx-auto my-10 px-4 md:px-12 bg-gray-100"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         {/* <Welcome /> */}
         
-        {/* Грид-лейаут на две колонки */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
-          {/* Первая колонка с управлением голосовым ассистентом */}
+        {/* Основной контент */}
+        <div className="mt-8">
           <motion.div 
-            className="bg-card max-w-[400px] text-card-foreground rounded-3xl border shadow-sm p-6 space-y-4"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2, duration: 0.4 }}
-          >
-            <VoiceSelector value={voice} onValueChange={setVoice} />
-            
-            <div className="flex flex-col items-center gap-4">
-              <BroadcastButton 
-                isSessionActive={isSessionActive} 
-                onClick={handleStartStopClick}
-              />
-            </div>
-            
-            {msgs.length > 4 && <TokenUsageDisplay messages={msgs} />}
-            
-            {status && (
-              <motion.div 
-                className="w-full flex flex-col gap-2"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <MessageControls conversation={conversation} msgs={msgs} />
-                {/* Закомментированный текстовый ввод 
-                <TextInput 
-                  onSubmit={sendTextMessage}
-                  disabled={!isSessionActive}
-                />
-                */}
-              </motion.div>
-            )}
-            
-            {status && <StatusDisplay status={status} />}
-          </motion.div>
-          
-          {/* Вторая колонка с карточкой и слайдами */}
-          <motion.div 
-            className="space-y-6 w-full col-span-3"
+            className="space-y-6 w-full"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4, duration: 0.4 }}
@@ -249,7 +203,7 @@ const App: React.FC = () => {
             
             {/* Компонент с командами для управления карточкой */}
             <motion.div
-              className="bg-card text-card-foreground rounded-3xl border shadow-sm p-6"
+              className="bg-white text-card-foreground rounded-3xl border shadow-sm p-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.4 }}

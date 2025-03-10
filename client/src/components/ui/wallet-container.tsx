@@ -10,7 +10,7 @@ export function WalletContainer() {
   return (
     <div className="p-6 bg-white rounded-xl shadow-md max-w-md mx-auto mt-8 mb-8">
       <h2 className="text-2xl font-bebas-neue mb-4 text-center">
-        Подключение к Sonic Blaze
+        Connect to Sonic Blaze
       </h2>
       
       <MetaMaskConnect />
@@ -23,16 +23,9 @@ export function WalletContainer() {
       
       <div className="mt-6 text-sm text-gray-500 font-montserrat">
         <p>
-          Используется тестовая сеть Sonic Blaze. Для работы с этой сетью добавьте её в MetaMask
-          со следующими параметрами:
+          The test network Sonic Blaze is used. To work with this network, add it to MetaMask
+          with the following parameters:
         </p>
-        <ul className="list-disc list-inside mt-2 space-y-1 text-xs">
-          <li>Имя сети: Sonic Blaze</li>
-          <li>URL RPC: https://blaze-testnet.calderachain.xyz/http</li>
-          <li>ID цепи: 91002</li>
-          <li>Символ валюты: BLZ</li>
-          <li>Обозреватель блоков: https://blaze-explorer.calderachain.xyz/</li>
-        </ul>
       </div>
     </div>
   )

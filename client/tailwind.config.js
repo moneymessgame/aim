@@ -3,6 +3,7 @@ module.exports = {
   content: [
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: ["class"],
   theme: {
     extend: {
       colors: {
@@ -39,11 +40,19 @@ module.exports = {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
+        // Дополнительные цвета из старой темы
+        "text-dark": "hsl(var(--text-dark))",
+        "text-light": "hsl(var(--text-light))",
+        placeholder: "hsl(var(--placeholder))",
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        sans: ["var(--font-sans)", "sans-serif"],
+        heading: ["var(--font-heading)", "sans-serif"],
       },
     },
   },

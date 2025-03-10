@@ -453,7 +453,7 @@ export default function AgentCreator() {
 
   return (
     <div className="max-w-5xl mx-auto p-6 bg-gray-100 min-h-screen rounded-lg">
-      <h1 className="text-4xl font-bold mb-8 font-[var(--font-bebas-neue)] tracking-wider">CREATE NEW AGENT</h1>
+      <h1 className="text-4xl mb-8 font-[var(--font-bebas-neue)] tracking-wider">CREATE NEW AGENT</h1>
       
       {error && (
         <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-6 py-4 rounded-xl shadow-md mb-6">
@@ -469,33 +469,37 @@ export default function AgentCreator() {
 
       {/* Agent template selection */}
       <div className="mb-8 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-        <h2 className="text-2xl font-medium mb-4 font-[var(--font-bebas-neue)] tracking-wider">CHOOSE AN AGENT TEMPLATE</h2>
+        <h2 className="text-2xl mb-4 font-[var(--font-bebas-neue)] tracking-wider">CHOOSE AN AGENT TEMPLATE</h2>
         <p className="mb-4 text-[var(--text-dark)]">Start with a pre-configured template or create an agent from scratch.</p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div 
-            className={`cursor-pointer p-4 rounded-xl shadow-md transition-all duration-200 ${selectedTemplate === '' ? 'border-2 border-blue-500 bg-blue-50' : 'border border-gray-200 hover:border-blue-400 bg-white'}`}
+          <button 
+            type="button"
+            className={`cursor-pointer p-4 rounded-xl shadow-md transition-all duration-200 w-full text-left ${selectedTemplate === '' ? 'border-2 border-blue-500 bg-blue-50' : 'border border-gray-200 hover:border-blue-400 bg-white'}`}
             onClick={() => {
               setSelectedTemplate('')
               applyTemplate('')
             }}
+            aria-pressed={selectedTemplate === ''}
           >
-            <h3 className="font-medium mb-2 font-[var(--font-bebas-neue)] tracking-wide">CUSTOM AGENT</h3>
+            <h3 className="mb-2 font-[var(--font-bebas-neue)] tracking-wide">CUSTOM AGENT</h3>
             <p className="text-sm text-[var(--text-light)]">Create your own agent from scratch</p>
-          </div>
+          </button>
           
           {agentTemplates.map(template => (
-            <div 
+            <button 
+              type="button"
               key={template.id}
-              className={`cursor-pointer p-4 rounded-xl shadow-md transition-all duration-200 ${selectedTemplate === template.id ? 'border-2 border-blue-500 bg-blue-50' : 'border border-gray-200 hover:border-blue-400 bg-white'}`}
+              className={`cursor-pointer p-4 rounded-xl shadow-md transition-all duration-200 w-full text-left ${selectedTemplate === template.id ? 'border-2 border-blue-500 bg-blue-50' : 'border border-gray-200 hover:border-blue-400 bg-white'}`}
               onClick={() => {
                 setSelectedTemplate(template.id)
                 applyTemplate(template.id)
               }}
+              aria-pressed={selectedTemplate === template.id}
             >
-              <h3 className="font-medium mb-2 font-[var(--font-bebas-neue)] tracking-wide">{template.name.toUpperCase()}</h3>
+              <h3 className="mb-2 font-[var(--font-bebas-neue)] tracking-wide">{template.name.toUpperCase()}</h3>
               <p className="text-sm text-[var(--text-light)]">{template.description}</p>
-            </div>
+            </button>
           ))}
         </div>
       </div>
@@ -503,8 +507,9 @@ export default function AgentCreator() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
         <div className="space-y-6">
           <div>
-            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Agent Name *</label>
+            <label htmlFor="agent-name" className="block text-[var(--text-dark)] mb-2 font-[var(--font-montserrat)]">Agent Name *</label>
             <input
+              id="agent-name"
               type="text"
               className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-[var(--text-dark)]"
               value={agentData.name}
@@ -514,10 +519,11 @@ export default function AgentCreator() {
           </div>
           
           <div>
-            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Agent Description *</label>
+            <label htmlFor="agent-description-0" className="block text-[var(--text-dark)] mb-2">Agent Description *</label>
             {agentData.bio.map((line, index) => (
-              <div key={`bio-${index}`} className="flex mb-2">
+              <div key={`bio-line-${index}`} className="flex mb-2">
                 <textarea
+                  id={`agent-description-${index}`}
                   className="flex-1 p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-[var(--text-dark)]"
                   value={line}
                   onChange={(e) => updateArrayItem('bio', index, e.target.value)}
@@ -545,7 +551,7 @@ export default function AgentCreator() {
           </div>
           
           <div>
-            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Traits</label>
+            <label htmlFor="agent-traits" className="block text-[var(--text-dark)] mb-2 font-[var(--font-montserrat)]">Traits</label>
             {agentData.traits.map((trait, index) => (
               <div key={`trait-${index}`} className="flex mb-2">
                 <input
@@ -574,7 +580,7 @@ export default function AgentCreator() {
           </div>
           
           <div>
-            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Tweet Examples</label>
+            <label htmlFor="agent-examples" className="block text-[var(--text-dark)] mb-2 font-[var(--font-montserrat)]">Tweet Examples</label>
             {agentData.examples.map((example, index) => (
               <div key={`example-${index}`} className="flex mb-2">
                 <input
@@ -603,7 +609,7 @@ export default function AgentCreator() {
           </div>
           
           <div>
-            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Example Accounts</label>
+            <label htmlFor="agent-accounts" className="block text-[var(--text-dark)] mb-2 font-[var(--font-montserrat)]">Example Accounts</label>
             {agentData.example_accounts.map((account, index) => (
               <div key={`account-${index}`} className="flex mb-2">
                 <input
@@ -632,8 +638,9 @@ export default function AgentCreator() {
           </div>
           
           <div>
-            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Loop Delay (in seconds)</label>
+            <label htmlFor="agent-loop-delay" className="block text-[var(--text-dark)] mb-2 font-[var(--font-montserrat)]">Loop Delay (in seconds)</label>
             <input
+              id="agent-loop-delay"
               type="number"
               className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-[var(--text-dark)]"
               value={agentData.loop_delay}
@@ -645,10 +652,11 @@ export default function AgentCreator() {
         
         <div className="space-y-6">
           <div>
-            <label className="block text-[var(--text-dark)] font-medium mb-2 font-[var(--font-montserrat)]">Tasks</label>
+            <label htmlFor="task-0" className="block text-[var(--text-dark)] mb-2">Tasks</label>
             {agentData.tasks.map((task, index) => (
               <div key={`task-${index}`} className="flex items-center mb-2">
                 <input
+                  id={index === 0 ? "task-0" : `task-${index}`}
                   type="text"
                   className="flex-1 p-2 border rounded mr-2"
                   value={task.name}

@@ -132,7 +132,7 @@ export default function ContractInteractionForm() {
           <form onSubmit={handleTransfer}>
             <div className="mb-4">
               <label htmlFor="transfer-recipient" className="block text-sm font-medium text-gray-700 mb-1">
-                Адрес получателя
+                Adress of recipient
               </label>
               <input
                 id="transfer-recipient"

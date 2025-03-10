@@ -18,13 +18,13 @@ export default function ContractInteractionForm() {
 	const [success, setSuccess] = useState<string | null>(null);
 	const [decimals, setDecimals] = useState(18);
 
-	// Состояние для формы перевода
+	// State for transfer form
 	const [transferForm, setTransferForm] = useState({
 		recipient: '',
 		amount: '',
 	});
 
-	// Состояние для формы минтинга (только для владельца)
+	// State for minting form (owner only)
 	const [mintForm, setMintForm] = useState({
 		recipient: '',
 		amount: '',
@@ -39,11 +39,11 @@ export default function ContractInteractionForm() {
 				const ownerAddress = await contract.owner();
 				setIsOwner(ownerAddress.toLowerCase() === address.toLowerCase());
 
-				// Получаем количество десятичных знаков для токена
+				// Get the number of decimal places for the token
 				const tokenDecimals = await contract.decimals();
 				setDecimals(tokenDecimals);
 			} catch (err) {
-				console.error('Ошибка при проверке владельца контракта:', err);
+				console.error('Error checking contract owner:', err);
 			}
 		};
 
@@ -54,7 +54,7 @@ export default function ContractInteractionForm() {
 		e.preventDefault();
 
 		if (!transferForm.recipient || !transferForm.amount) {
-			setError('Пожалуйста, заполните все поля');
+			setError('Please fill in all fields');
 			return;
 		}
 
@@ -70,13 +70,13 @@ export default function ContractInteractionForm() {
 			await tx.wait();
 
 			setSuccess(
-				`Успешно отправлено ${transferForm.amount} токенов на адрес ${transferForm.recipient}`
+				`Successfully sent ${transferForm.amount} tokens to address ${transferForm.recipient}`
 			);
 			setTransferForm({ recipient: '', amount: '' });
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		} catch (err: any) {
-			console.error('Ошибка при отправке токенов:', err);
-			setError(err.message || 'Произошла ошибка при отправке токенов');
+			console.error('Error sending tokens:', err);
+			setError(err.message || 'An error occurred while sending tokens');
 		} finally {
 			setLoading(false);
 		}
@@ -86,7 +86,7 @@ export default function ContractInteractionForm() {
 		e.preventDefault();
 
 		if (!mintForm.recipient || !mintForm.amount) {
-			setError('Пожалуйста, заполните все поля');
+			setError('Please fill in all fields');
 			return;
 		}
 
@@ -102,19 +102,19 @@ export default function ContractInteractionForm() {
 			await tx.wait();
 
 			setSuccess(
-				`Успешно выпущено ${mintForm.amount} новых токенов на адрес ${mintForm.recipient}`
+				`Successfully minted ${mintForm.amount} new tokens to address ${mintForm.recipient}`
 			);
 			setMintForm({ recipient: '', amount: '' });
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		} catch (err: any) {
-			console.error('Ошибка при минтинге токенов:', err);
+			console.error('Error minting tokens:', err);
 
 			if (err.message.includes('OwnableUnauthorizedAccount')) {
 				setError(
-					'У вас нет прав для выпуска новых токенов. Эта функция доступна только владельцу контракта.'
+					'You do not have permission to mint new tokens. This function is only available to the contract owner.'
 				);
 			} else {
-				setError(err.message || 'Произошла ошибка при выпуске новых токенов');
+				setError(err.message || 'An error occurred while minting new tokens');
 			}
 		} finally {
 			setLoading(false);
@@ -124,7 +124,7 @@ export default function ContractInteractionForm() {
 	return (
 		<div className="font-montserrat">
 			<h2 className="text-2xl font-semibold mb-6">
-				Взаимодействие с контрактом
+				Contract Interaction
 			</h2>
 
 			{error && (
@@ -140,16 +140,16 @@ export default function ContractInteractionForm() {
 			)}
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-				{/* Форма для отправки токенов */}
+				{/* Form for sending tokens */}
 				<div className="bg-gray-50 p-6 rounded-lg">
-					<h3 className="text-xl font-semibold mb-4">Отправить токены</h3>
+					<h3 className="text-xl font-semibold mb-4">Send Tokens</h3>
 					<form onSubmit={handleTransfer}>
 						<div className="mb-4">
 							<label
 								htmlFor="transfer-recipient"
 								className="block text-sm font-medium text-gray-700 mb-1"
 							>
-								Адрес получателя
+								Recipient Address
 							</label>
 							<input
 								id="transfer-recipient"
@@ -192,16 +192,16 @@ export default function ContractInteractionForm() {
 							disabled={loading}
 							className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-400"
 						>
-							{loading ? 'Отправка...' : 'Отправить токены'}
+							{loading ? 'Sending...' : 'Send Tokens'}
 						</button>
 					</form>
 				</div>
 
-				{/* Форма для минтинга токенов (только для владельца) */}
+				{/* Form for minting tokens (owner only) */}
 				{isOwner && (
 					<div className="bg-gray-50 p-6 rounded-lg">
 						<h3 className="text-xl font-semibold mb-4">
-							Выпустить новые токены
+							Mint New Tokens
 						</h3>
 						<form onSubmit={handleMint}>
 							<div className="mb-4">
@@ -209,7 +209,7 @@ export default function ContractInteractionForm() {
 									htmlFor="mint-recipient"
 									className="block text-sm font-medium text-gray-700 mb-1"
 								>
-									Адрес получателя новых токенов
+									Recipient Address for New Tokens
 								</label>
 								<input
 									id="mint-recipient"
@@ -229,7 +229,7 @@ export default function ContractInteractionForm() {
 									htmlFor="mint-amount"
 									className="block text-sm font-medium text-gray-700 mb-1"
 								>
-									Количество токенов для выпуска
+									Amount of Tokens to Mint
 								</label>
 								<input
 									id="mint-amount"
@@ -249,7 +249,7 @@ export default function ContractInteractionForm() {
 								disabled={loading}
 								className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:bg-green-400"
 							>
-								{loading ? 'Выпуск...' : 'Выпустить токены'}
+								{loading ? 'Minting...' : 'Mint Tokens'}
 							</button>
 						</form>
 					</div>
@@ -257,10 +257,10 @@ export default function ContractInteractionForm() {
 
 				{!isOwner && (
 					<div className="bg-gray-50 p-6 rounded-lg">
-						<h3 className="text-xl font-semibold mb-4">Выпуск новых токенов</h3>
+						<h3 className="text-xl font-semibold mb-4">Mint New Tokens</h3>
 						<p className="text-gray-600">
-							Только владелец контракта может выпускать новые токены. Вы не
-							являетесь владельцем контракта.
+							Only the contract owner can mint new tokens. You are not
+							the contract owner.
 						</p>
 					</div>
 				)}
